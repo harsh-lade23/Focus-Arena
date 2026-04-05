@@ -9,6 +9,13 @@
 Instead of traditional task tracking, users participate in **challenges**, complete study sessions, and compete using **points, streaks, and leaderboards**.
 
 ---
+## 🎯 Problem
+Most productivity apps track tasks, but lack motivation and competition.
+
+## 💡 Solution
+Focus Arena introduces a challenge-based system where users compete using real study sessions.
+
+---
 
 ## 🚀 Core Idea
 * ⚔️ 1v1 and Group Challenges
@@ -17,6 +24,27 @@ Instead of traditional task tracking, users participate in **challenges**, compl
 * 🔥 Gamification with streaks and rewards
 * 🎯 Focus on **consistent performance**, not just activity
 
+---
+
+## 🧠 System Design
+
+- StudySession → tracks actual work (truth layer)
+- SessionParticipation → maps session to challenges
+- Participants → stores leaderboard stats
+
+### 🔗 Relationship Model
+User ↔ Challenge (Many-to-Many)
+→ A user can participate in multiple challenges simultaneously.
+
+
+---
+
+## 🔄 Data Flow
+
+1. User creates study session
+2. Session is mapped to selected challenges
+3. Stats updated atomically
+4. Leaderboard updates
 ---
 
 ## ⚙️ Current Features
@@ -42,32 +70,6 @@ Instead of traditional task tracking, users participate in **challenges**, compl
 
 ---
 
-## 🧠 System Design
-Focus Arena is built with **scalability and fairness at its core**.
-
-### 🔗 Relationship Model
-User ↔ Challenge (Many-to-Many)
-→ A user can participate in multiple challenges simultaneously.
-
----
-### 🧩 Core Architecture Layers
-* **StudySession → Truth Layer** (actual work done)
-* **SessionParticipation → Mapping Layer** (where work is counted)
-* **Participants → Aggregation Layer** (leaderboard stats)
-
----
-### ⚡ Atomic Data Flow
-All critical operations are executed in a **single transaction**:
-
-1. Create StudySession
-2. Map session to selected challenges
-3. Update participant stats
-4. Update daily summaries
-5. Update user stats
-
-👉 Ensures **consistency, fairness, and no data corruption**
-
----
 
 ## 🏗️ Tech Stack
 * 🟣 Kotlin
@@ -78,11 +80,9 @@ All critical operations are executed in a **single transaction**:
 
 ---
 
-## 📱 App Screens (Coming Soon)
-* Authentication Screen
-* Create / Join Challenge
-* Challenge Dashboard
-* Study Activity Screen
+## 📸 Screenshots
+
+(coming soon)
 
 ---
 
@@ -96,6 +96,12 @@ git clone https://github.com/harsh-lade23/Focus-Arena.git
 
 # Run the app 🚀
 ```
+
+---
+
+## 🚧 Status
+
+Currently rebuilding core system with scalable architecture.
 
 ---
 
