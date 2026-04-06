@@ -46,9 +46,6 @@ class AuthenticationRepositoryImpl @Inject constructor(
             throw e
         }
 
-
-
-
         }
         catch (e: FirebaseAuthException){
             emit(ResultState.Error(e.localizedMessage?:"Auth Error"))
