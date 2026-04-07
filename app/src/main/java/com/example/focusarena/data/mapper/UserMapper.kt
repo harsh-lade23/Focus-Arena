@@ -17,6 +17,7 @@ fun UserEntity.toUser(): User {
         totalChallengeWon = totalChallengeWon,
         totalStudiedMinutes = totalStudiedMinutes,
         createdAt = createdAt,
+        name = name,
         lastActiveAt = lastActiveAt
     )
 }
@@ -29,6 +30,7 @@ fun User.toUserEntity(): UserEntity{
         profilePictureUrl = profilePictureUrl,
         totalPoints = totalPoints,
         streak = streak,
+        name = name ,
         totalChallengeJoined = totalChallengeJoined,
         totalActiveDays = totalActiveDays,
         totalChallengeWon = totalChallengeWon,
