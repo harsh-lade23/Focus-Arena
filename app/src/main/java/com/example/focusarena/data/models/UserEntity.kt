@@ -2,6 +2,7 @@ package com.example.focusarena.data.models
 
 data class UserEntity(
     val userId: String,
+    val name: String,
     val username: String,
     val email: String,
     val profilePictureUrl: String? = null,
