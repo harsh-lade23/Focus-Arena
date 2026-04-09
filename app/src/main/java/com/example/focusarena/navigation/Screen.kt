@@ -4,7 +4,7 @@ package com.example.focusarena.navigation
 
 
 
-sealed class Screen(val route: String) {
+sealed class    Screen(val route: String) {
     object Authentication :Screen("authentication")
     object Home: Screen("home")
 
