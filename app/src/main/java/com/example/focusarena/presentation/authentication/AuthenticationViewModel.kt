@@ -8,10 +8,13 @@ import com.example.focusarena.core.utils.ResultState
 import com.example.focusarena.domain.models.User
 import com.example.focusarena.domain.usecase.authentication.SignInUserUseCase
 import com.example.focusarena.domain.usecase.authentication.SignUpUserUseCase
+import com.example.focusarena.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +29,9 @@ class AuthenticationViewModel @Inject constructor(
     val authenticationScreenState = _authenticationState.asStateFlow()
 
 
+    private var _uiEvent = Channel<AuthenticationUiEvents>()
+    val uiEvents = _uiEvent.receiveAsFlow()
+
     fun signInUser(email: String, password: String){
         _authenticationState.value=_authenticationState.value.copy(isLoading = true)
 
@@ -38,6 +44,7 @@ class AuthenticationViewModel @Inject constructor(
                     is ResultState.Success<*> -> {
                         _authenticationState.value =
                             _authenticationState.value.copy(isLoading = false, success = response.data.toString())
+                        _uiEvent.send(AuthenticationUiEvents.Navigate(Screen.Home.route))
                     }
 
                 }
@@ -45,6 +52,7 @@ class AuthenticationViewModel @Inject constructor(
             }
         }
     }
+
 
     fun signUpUser(user: User, password: String){
         _authenticationState.value=_authenticationState.value.copy(isLoading = true)
@@ -58,6 +66,8 @@ class AuthenticationViewModel @Inject constructor(
                     is ResultState.Success<*> -> {
                         _authenticationState.value =
                             _authenticationState.value.copy(isLoading = false, success = response.data.toString())
+
+                        _uiEvent.send(AuthenticationUiEvents.Navigate(Screen.Home.route))
                     }
 
                 }
