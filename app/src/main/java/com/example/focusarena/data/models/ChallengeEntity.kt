@@ -5,7 +5,7 @@ data class ChallengeEntity(
     val title: String,
     val description: String,
     val ownerId: String,
-    val participantLimit: Int? =null,
+    val participantLimit: Int,
     val currentParticipantsCount: Int,
     val durationDays: Int,
     val startedAt: Long,
@@ -17,6 +17,7 @@ data class ChallengeEntity(
 
 enum class ChallengeStatus{
     ACTIVE,
+    CREATED,
     COMPLETED,
     CANCELED
 }
