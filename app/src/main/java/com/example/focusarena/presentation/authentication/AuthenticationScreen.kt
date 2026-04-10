@@ -35,7 +35,7 @@ import com.example.focusarena.navigation.Screen
 
 @Composable
 fun AuthenticationScreen(
-    authenticationViewModel: AuthenticationViewModel = hiltViewModel(),
+    authenticationViewModel: AuthenticationViewModel,
     navController: NavController
 ) {
 
@@ -75,6 +75,7 @@ fun AuthenticationScreen(
         if (screenState.value.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else if (screenState.value.success != null) {
+            //TODO - Show a welcome or success card
             Text(text = screenState.value.success!!, modifier = Modifier.align(Alignment.Center))
         } else {
             if (currentScreen.value == 0) {
