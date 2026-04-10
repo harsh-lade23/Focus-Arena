@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
                     is ResultState.Success-> {
 
                         _homeUiState.value =
-                            _homeUiState.value.copy(isLoading = false, challengeList = result.data)
+                            _homeUiState.value.copy(isLoading = false,  challengeWithParticipant =  result.data)
                     }
                 }
 

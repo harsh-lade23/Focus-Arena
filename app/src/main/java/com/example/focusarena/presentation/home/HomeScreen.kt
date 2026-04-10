@@ -51,6 +51,7 @@ fun HomeScreen(
         }
     }
     val homeScreenState = viewModel.homeUiState.collectAsStateWithLifecycle()
+    val challengeWithParticipant = homeScreenState.value.challengeWithParticipant
     Surface(
         modifier = Modifier.fillMaxSize()
     ){
@@ -66,15 +67,17 @@ fun HomeScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(items=homeScreenState.value.challengeList!!, key = {it.challengeId}){challenge->
+                items(items=challengeWithParticipant!!, key = {it.challenge.challengeId}){item->
                     val daysLeft =
-                        if(challenge.challengeStatus== ChallengeStatus.ACTIVE) DateConversionFunctions.differenceDaysInTwoLong(challenge.startedAt, challenge.endedAt)
+                        if(item.challenge.challengeStatus== ChallengeStatus.ACTIVE) DateConversionFunctions.differenceDaysInTwoLong(item.challenge.startedAt, item.challenge.endedAt)
                         else null
                     ChallengeCard(
                         viewModel = viewModel,
-                        challengeName = challenge.title,
+                        challengeId = item.challenge.challengeId,
+                        status = item.challenge.challengeStatus.toString(),
+                        challengeName = item.challenge.title,
                         daysLeft = daysLeft,
-                        points = challenge.points
+                        points = item.participant.totalPoints.toString()
                     )
                 }
             }

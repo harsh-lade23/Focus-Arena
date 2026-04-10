@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.example.focusarena.presentation.home.HomeScreen
 import com.example.focusarena.presentation.authentication.AuthenticationScreen
 import com.example.focusarena.presentation.authentication.AuthenticationViewModel
+import com.example.focusarena.presentation.home.HomeViewModel
 
 
 @Composable
@@ -22,8 +23,8 @@ fun AppNavigation (
         startDestination = startDestination
     ) {
         composable(Screen.Home.route) {
-            //TODO - CALL ALL CHALLENGE SCREEN/ HOME
-            HomeScreen(navController = navController)
+            val homeViewModel: HomeViewModel = hiltViewModel()
+            HomeScreen(navController = navController, homeViewModel)
         }
         composable(Screen.Authentication.route) {
             val authenticationViewModel: AuthenticationViewModel = hiltViewModel()
