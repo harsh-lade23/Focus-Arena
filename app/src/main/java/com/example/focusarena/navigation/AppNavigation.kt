@@ -33,6 +33,12 @@ fun AppNavigation (
                 navController = navController
             )
         }
+        composable(Screen.CreateChallenge.route) {
+            CreateChallengeScreen()
+        }
+        composable(Screen.JoinChallenge.route){
+            JoinChallengeScreen()
+        }
         composable(
             route = Screen.Challenge.route,
             arguments = listOf(
@@ -42,7 +48,8 @@ fun AppNavigation (
             )
         ) { backstack ->
             val challengeId= backstack.arguments?.getString("challengeId")!!
-            //TODO - call challenge screen
+
+            ChallengeScreen(challengeId)
 
         }
 
