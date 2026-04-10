@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,36 +56,78 @@ fun HomeScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ){
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            HomeHeader(
-                viewModel = viewModel,
-                userName = homeScreenState.value.userName?:"" //todo - change according to viewmodel
-            )
-
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(items=challengeWithParticipant!!, key = {it.challenge.challengeId}){item->
-                    val daysLeft =
-                        if(item.challenge.challengeStatus== ChallengeStatus.ACTIVE) DateConversionFunctions.differenceDaysInTwoLong(item.challenge.startedAt, item.challenge.endedAt)
-                        else null
-                    ChallengeCard(
-                        viewModel = viewModel,
-                        challengeId = item.challenge.challengeId,
-                        status = item.challenge.challengeStatus.toString(),
-                        challengeName = item.challenge.title,
-                        daysLeft = daysLeft,
-                        points = item.participant.totalPoints.toString()
-                    )
-                }
+        if(homeScreenState.value.isLoading){
+            Box(modifier =Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
+        else if(homeScreenState.value.error!=null){
+            Box(modifier =Modifier.fillMaxSize()) {
+                Text(
+                    homeScreenState.value.error!!,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+        else {
+
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                HomeHeader(
+                    viewModel = viewModel,
+                    userName = homeScreenState.value.userName
+                        ?: "" //todo - change according to viewmodel
+                )
 
 
+                if(homeScreenState.value.challengeWithParticipant==null){
+                    Text(
+                        "Failed to load Challenges",
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        "Click Here to refresh",
+                        modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
+                            onClick = {
+                                //todo - check if can call it using events
+                                viewModel.getAllChallenges()
+                            }
+                        )
+                    )
+                }
+                else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
 
+                    )
+                    {
+                        items(
+                            items = challengeWithParticipant!!,
+                            key = { it.challenge.challengeId }) { item ->
+                            val daysLeft =
+                                if (item.challenge.challengeStatus == ChallengeStatus.ACTIVE) DateConversionFunctions.differenceDaysInTwoLong(
+                                    item.challenge.startedAt,
+                                    item.challenge.endedAt
+                                )
+                                else null
+                            ChallengeCard(
+                                viewModel = viewModel,
+                                challengeId = item.challenge.challengeId,
+                                status = item.challenge.challengeStatus.toString(),
+                                challengeName = item.challenge.title,
+                                daysLeft = daysLeft,
+                                points = item.participant.totalPoints.toString()
+                            )
+                        }
+                    }
+                }
+            }
+
+
+        }
 
 
     }
@@ -153,7 +196,7 @@ private fun HomeHeader(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Hi $userName",
+                Text("Hello $userName",
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(
