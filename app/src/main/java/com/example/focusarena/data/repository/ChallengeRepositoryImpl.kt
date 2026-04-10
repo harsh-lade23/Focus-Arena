@@ -3,10 +3,14 @@ package com.example.focusarena.data.repository
 import com.example.focusarena.core.utils.CHALLENGE_COLLECTION
 import com.example.focusarena.core.utils.PARTICIPANT_COLLECTION
 import com.example.focusarena.core.utils.ResultState
+import com.example.focusarena.data.mapper.toDomain
+import com.example.focusarena.data.models.ChallengeEntity
 import com.example.focusarena.data.models.ChallengeStatus
 import com.example.focusarena.data.models.ChallengeWithParticipants
+import com.example.focusarena.data.models.ParticipantEntity
 import com.example.focusarena.data.models.ParticipantStatus
 import com.example.focusarena.domain.models.Challenge
+import com.example.focusarena.domain.models.ChallengeWithParticipant
 import com.example.focusarena.domain.models.Participant
 import com.example.focusarena.domain.repository.ChallengeRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -26,7 +30,9 @@ class ChallengeRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ) : ChallengeRepository {
-    override fun getChallenges(): Flow<ResultState<List<Challenge>>> = flow {
+
+    //TODO - FIX ALL THE FUNCTIONS -> PROVIDE THE ENTITY AND DOMAIN CLASS OBJECT PROPERLY
+    override fun getChallenges(): Flow<ResultState<List<ChallengeWithParticipant>>> = flow {
         emit(ResultState.Loading)
         try {
             val userId =
@@ -36,13 +42,20 @@ class ChallengeRepositoryImpl @Inject constructor(
                 .get()
                 .await()
 
-            val challengeIds = participants.mapNotNull {
-                it.toObject(Participant::class.java).challengeId
+
+            val challengeIds = mutableListOf<String>()
+
+
+            val participantMap = mutableMapOf<String, Participant>()
+            participants.mapNotNull {
+                val participant=it.toObject(ParticipantEntity::class.java).toDomain()
+                challengeIds.add(participant.challengeId)
+                participantMap.put(participant.challengeId, participant)
             }
 
             val chunks = challengeIds.chunked(10)
 
-            val challengeList = mutableListOf<Challenge>()
+            val challengeWithParticipantList = mutableListOf<ChallengeWithParticipant>()
 
             for (chunk in chunks) {
                 val challenges = firebaseFirestore.collection(CHALLENGE_COLLECTION)
@@ -50,16 +63,20 @@ class ChallengeRepositoryImpl @Inject constructor(
                     .get()
                     .await()
 
-                challengeList.addAll(
+                challengeWithParticipantList.addAll(
                     challenges.mapNotNull {
-                        it.toObject(Challenge::class.java)
+                        val challenge =it.toObject(ChallengeEntity::class.java).toDomain()
+                        ChallengeWithParticipant(
+                            challenge = challenge,
+                            participant = participantMap[challenge.challengeId]!!
+                        )
                     }
                 )
 
             }
 
 
-            emit(ResultState.Success(challengeList))
+            emit(ResultState.Success(challengeWithParticipantList))
 
 
         } catch (e: Exception) {
