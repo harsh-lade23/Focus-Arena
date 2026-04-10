@@ -22,3 +22,19 @@ fun Participant.toEntity(): ParticipantEntity {
 
     )
 }
+fun ParticipantEntity.toDomain(): Participant{
+    return Participant(
+        participantId = participantId,
+        userId = userId,
+        challengeId = challengeId,
+        isOwner = isOwner,
+        status = status,
+        joinedAt = joinedAt,
+        leftAt = leftAt,
+        profilePictureUrl = profilePictureUrl,
+        totalPoints = totalPoints,
+        totalStudiedMinutes = totalStudiedMinutes,
+        totalTargetMinutes = totalTargetMinutes,
+        totalActiveDays = totalActiveDays
+    )
+}
