@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 interface ChallengeRepository {
     fun getChallenges() : Flow<ResultState<List<ChallengeWithParticipant>>>
     fun getChallengeById(challengeId: String) : Flow<ResultState<ChallengeWithParticipants>>
-    fun createChallenge(challenge: Challenge) : Flow<ResultState<String>>
+    fun createChallenge(challenge: Challenge, winningPrize: String) : Flow<ResultState<String>>
     fun startChallenge(challengeId: String) : Flow<ResultState<String>>
 
-    fun joinChallenge(challengeId: String): Flow<ResultState<String>>
+    fun joinChallenge(challengeId: String, participantPrize: String): Flow<ResultState<String>>
 }

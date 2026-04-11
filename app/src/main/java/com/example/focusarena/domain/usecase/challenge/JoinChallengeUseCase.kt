@@ -9,7 +9,7 @@ import javax.inject.Inject
 class JoinChallengeUseCase @Inject constructor(
     private val challengeRepository: ChallengeRepository
 ){
-    operator fun invoke(challengeId: String): Flow<ResultState<String>> {
-        return challengeRepository.joinChallenge(challengeId)
+    operator fun invoke(challengeId: String, prize: String): Flow<ResultState<String>> {
+        return challengeRepository.joinChallenge(challengeId, prize)
     }
 }

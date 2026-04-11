@@ -17,6 +17,7 @@ class CreateChallengeUseCase @Inject constructor(
         durationDays: Int,
         challengeType: ChallengeType,
         description: String = "",
+        prize: String
 
         ): Flow<ResultState<String>> {
         val challenge = Challenge(
@@ -31,6 +32,6 @@ class CreateChallengeUseCase @Inject constructor(
             challengeId = "",
             ownerId = "",
         )
-        return challengeRepository.createChallenge(challenge)
+        return challengeRepository.createChallenge(challenge, winningPrize = prize)
     }
 }

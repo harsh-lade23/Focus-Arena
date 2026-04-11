@@ -125,7 +125,7 @@ class ChallengeRepositoryImpl @Inject constructor(
 
         }.flowOn(Dispatchers.IO)
 
-    override fun createChallenge(challenge: Challenge): Flow<ResultState<String>> = flow {
+    override fun createChallenge(challenge: Challenge, winningPrize: String): Flow<ResultState<String>> = flow {
         emit(ResultState.Loading)
         try {
             val userId = firebaseAuth.currentUser?.uid
@@ -148,7 +148,8 @@ class ChallengeRepositoryImpl @Inject constructor(
                 challengeId = challengeId,
                 isOwner = true,
                 status = ParticipantStatus.ACTIVE,
-                joinedAt = System.currentTimeMillis()
+                joinedAt = System.currentTimeMillis(),
+                prize = winningPrize
             )
 
             firebaseFirestore.runTransaction { transaction ->
@@ -187,7 +188,7 @@ class ChallengeRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun joinChallenge(challengeId: String): Flow<ResultState<String>> = flow {
+    override fun joinChallenge(challengeId: String, participantPrize: String): Flow<ResultState<String>> = flow {
         emit(ResultState.Loading)
         try {
             val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User id not found")
@@ -213,7 +214,8 @@ class ChallengeRepositoryImpl @Inject constructor(
                     totalPoints =0,
                     totalStudiedMinutes = 0,
                     totalTargetMinutes =0,
-                    totalActiveDays = 0
+                    totalActiveDays = 0,
+                    prize = participantPrize
                 )
                 transaction.set(participantDocRef, participant)
                 transaction.update(challengeDocRef, "currentParticipantsCount", challenge.currentParticipantsCount+1)
