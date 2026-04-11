@@ -14,9 +14,7 @@ import javax.inject.Inject
 
 
 
-sealed class UiEvent {
-    data class Navigate(val route: String): UiEvent()
-}
+
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(

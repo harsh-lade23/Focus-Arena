@@ -11,7 +11,9 @@ import com.example.focusarena.presentation.home.HomeScreen
 import com.example.focusarena.presentation.authentication.AuthenticationScreen
 import com.example.focusarena.presentation.authentication.AuthenticationViewModel
 import com.example.focusarena.presentation.challenge.ChallengeScreen
+import com.example.focusarena.presentation.create_challenge.CreateChallengeScreen
 import com.example.focusarena.presentation.home.HomeViewModel
+import com.example.focusarena.presentation.join_challenge.JoinChallengeScreen
 
 
 @Composable
