@@ -1,9 +1,9 @@
 package com.example.focusarena.domain.usecase.challenge
 
 import com.example.focusarena.core.utils.ResultState
-import com.example.focusarena.data.models.ChallengeStatus
-import com.example.focusarena.data.models.ChallengeType
 import com.example.focusarena.domain.models.Challenge
+import com.example.focusarena.domain.models.ChallengeStatus
+import com.example.focusarena.domain.models.ChallengeType
 import com.example.focusarena.domain.repository.ChallengeRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

@@ -1,8 +1,5 @@
 package com.example.focusarena.domain.models
 
-import com.example.focusarena.data.models.ChallengeStatus
-import com.example.focusarena.data.models.ChallengeType
-
 
 data class Challenge(
     val challengeId: String,
@@ -18,3 +15,15 @@ data class Challenge(
     val challengeType: ChallengeType,
     val createdAt: Long
 )
+
+
+enum class ChallengeStatus{
+    ACTIVE,
+    CREATED,
+    COMPLETED,
+    CANCELED
+}
+enum class ChallengeType{
+    DUO,
+    GROUP
+}
