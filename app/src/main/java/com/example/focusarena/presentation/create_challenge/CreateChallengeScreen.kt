@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.focusarena.data.models.ChallengeType
+import com.example.focusarena.domain.models.ChallengeType
 
 
 @Composable

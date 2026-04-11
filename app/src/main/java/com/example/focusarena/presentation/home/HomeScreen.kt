@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.focusarena.core.utils.DateConversionFunctions
-import com.example.focusarena.data.models.ChallengeStatus
+import com.example.focusarena.domain.models.ChallengeStatus
 import com.example.focusarena.navigation.Screen
 
 

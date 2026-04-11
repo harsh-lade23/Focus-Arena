@@ -1,15 +1,16 @@
 package com.example.focusarena.data.repository
 
+import android.util.Log
 import com.example.focusarena.core.utils.CHALLENGE_COLLECTION
 import com.example.focusarena.core.utils.PARTICIPANT_COLLECTION
 import com.example.focusarena.core.utils.ResultState
 import com.example.focusarena.data.mapper.toDomain
+import com.example.focusarena.data.mapper.toEntity
 import com.example.focusarena.data.models.ChallengeEntity
-import com.example.focusarena.data.models.ChallengeStatus
 import com.example.focusarena.data.models.ChallengeWithParticipants
 import com.example.focusarena.data.models.ParticipantEntity
-import com.example.focusarena.data.models.ParticipantStatus
 import com.example.focusarena.domain.models.Challenge
+import com.example.focusarena.domain.models.ChallengeStatus
 import com.example.focusarena.domain.models.ChallengeWithParticipant
 import com.example.focusarena.domain.models.Participant
 import com.example.focusarena.domain.repository.ChallengeRepository
@@ -43,12 +44,18 @@ class ChallengeRepositoryImpl @Inject constructor(
                 .await()
 
 
+
             val challengeIds = mutableListOf<String>()
 
+            Log.d("Firestore bug fix", "getChallenges: get participants snapshot successfully")
 
             val participantMap = mutableMapOf<String, Participant>()
             participants.mapNotNull {
-                val participant = it.toObject(ParticipantEntity::class.java).toDomain()
+                Log.d("Firestore bug fix", "getChallenges: Snapshot - $it")
+                val participantEntity = it.toObject(ParticipantEntity::class.java)
+                Log.d("Firestore bug fix", "getChallenges: got participantEntity - $participantEntity")
+                val participant = participantEntity.toDomain()
+                Log.d("Firestore bug fix", "getChallenges: got participant - $participant")
                 challengeIds.add(participant.challengeId)
                 participantMap.put(participant.challengeId, participant)
             }
@@ -57,24 +64,30 @@ class ChallengeRepositoryImpl @Inject constructor(
 
             val challengeWithParticipantList = mutableListOf<ChallengeWithParticipant>()
 
+
             for (chunk in chunks) {
                 val challenges = firebaseFirestore.collection(CHALLENGE_COLLECTION)
                     .whereIn(FieldPath.documentId(), chunk)
                     .get()
                     .await()
 
+                Log.d("Firestore bug fix", "getChallenges: get challenge snapshot successfully")
+
                 challengeWithParticipantList.addAll(
                     challenges.mapNotNull {
-                        val challenge = it.toObject(ChallengeEntity::class.java).toDomain()
+                        val challengeEntity = it.toObject(ChallengeEntity::class.java).toDomain()
+                        Log.d("Firestore bug fix", "getChallenges: converted challenge object")
                         ChallengeWithParticipant(
-                            challenge = challenge,
-                            participant = participantMap[challenge.challengeId]!!
+                            challenge = challengeEntity,
+                            participant = participantMap[challengeEntity.challengeId]!!
                         )
+
                     }
                 )
 
             }
 
+            Log.d("Firestore bug fix", "getChallenges: emit challengeWithPart... - $challengeWithParticipantList")
 
             emit(ResultState.Success(challengeWithParticipantList))
 
@@ -94,7 +107,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                             .document(challengeId)
                             .get()
                             .await()
-                            .toObject(Challenge::class.java)
+                            .toObject(ChallengeEntity::class.java)
                             ?: throw Exception("Failed to fetch challenge")
                     }
 
@@ -104,7 +117,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                             .get()
                             .await()
                             .mapNotNull {
-                                it.toObject(Participant::class.java)
+                                it.toObject(ParticipantEntity::class.java).toDomain()
                             }
                     }
 
@@ -113,7 +126,7 @@ class ChallengeRepositoryImpl @Inject constructor(
 
 
                     val challengeWithParticipants =
-                        ChallengeWithParticipants(challenge, participants = participants)
+                        ChallengeWithParticipants(challenge.toDomain(), participants = participants)
                     emit(ResultState.Success(challengeWithParticipants))
 
 
@@ -140,20 +153,20 @@ class ChallengeRepositoryImpl @Inject constructor(
             val challengeWithId = challenge.copy(
                 challengeId = challengeId,
                 ownerId = userId
-            )
+            ).toEntity()
 
-            val participant = Participant(
+            val participant = ParticipantEntity(
                 participantId = participantId,
                 userId = userId,
                 challengeId = challengeId,
-                isOwner = true,
-                status = ParticipantStatus.ACTIVE,
+                owner = true,
+                status = "ACTIVE",
                 joinedAt = System.currentTimeMillis(),
                 prize = winningPrize
             )
 
             firebaseFirestore.runTransaction { transaction ->
-                transaction.set(challengeRef, challengeId)
+                transaction.set(challengeRef, challengeWithId)
                 transaction.set(participantRef, participant)
             }.await()
             emit(ResultState.Success(challengeId))
@@ -174,10 +187,10 @@ class ChallengeRepositoryImpl @Inject constructor(
 
 
             firebaseFirestore.runTransaction { transaction ->
-                val challenge = transaction.get(challengeDocRef).toObject(Challenge::class.java)
+                val challengeEntity = transaction.get(challengeDocRef).toObject(ChallengeEntity::class.java)
                     ?: throw Exception("Unknown error occurred")
-                if (challenge.challengeStatus != ChallengeStatus.CREATED) throw Exception("Challenge already started")
-                if (challenge.ownerId != userId) throw Exception("Can't start the challenge. Only Admin Can start the Challenge")
+                if (challengeEntity.challengeStatus != ChallengeStatus.CREATED.toString()) throw Exception("Challenge already started")
+                if (challengeEntity.ownerId != userId) throw Exception("Can't start the challenge. Only Admin Can start the Challenge")
 
                 transaction.update(challengeDocRef, "challengeStatus", ChallengeStatus.ACTIVE)
             }.await()
@@ -198,16 +211,16 @@ class ChallengeRepositoryImpl @Inject constructor(
 
             firebaseFirestore.runTransaction { transaction ->
 
-                val challenge = transaction.get(challengeDocRef).toObject(ChallengeEntity::class.java)?:throw Exception("Challenge not found.")
-                if(challenge.currentParticipantsCount>=challenge.participantLimit)throw Exception("Can't join, max participant limit reached")
+                val challengeEntity = transaction.get(challengeDocRef).toObject(ChallengeEntity::class.java)?:throw Exception("Challenge not found.")
+                if(challengeEntity.currentParticipantsCount>=challengeEntity.participantLimit)throw Exception("Can't join, max participant limit reached")
 
                 val participantDocRef = firebaseFirestore.collection(PARTICIPANT_COLLECTION).document()
                 val participant = ParticipantEntity(
                     participantId = participantDocRef.id,
                     userId = uid,
                     challengeId = challengeId,
-                    isOwner = false,
-                    status = ParticipantStatus.ACTIVE,
+                    owner = false,
+                    status = "ACTIVE",
                     joinedAt = System.currentTimeMillis(),
                     leftAt = null,
                     profilePictureUrl = null,
@@ -218,7 +231,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                     prize = participantPrize
                 )
                 transaction.set(participantDocRef, participant)
-                transaction.update(challengeDocRef, "currentParticipantsCount", challenge.currentParticipantsCount+1)
+                transaction.update(challengeDocRef, "currentParticipantsCount", challengeEntity.currentParticipantsCount+1)
             }.await()
 
             emit(ResultState.Success(challengeId))

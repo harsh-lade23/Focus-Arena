@@ -1,7 +1,5 @@
 package com.example.focusarena.domain.models
 
-import com.example.focusarena.data.models.ParticipantStatus
-
 
 data class Participant(
     val participantId: String,
@@ -17,7 +15,14 @@ data class Participant(
 
     val totalStudiedMinutes: Int = 0,
     val totalTargetMinutes: Int = 0,
-    val totalActiveDays: Int = 0,
+    val totalActiveDays: Int = 0
+)
 
-    )
 
+
+enum class ParticipantStatus{
+    ACTIVE,
+    INACTIVE,
+    LEFT,
+    BANNED
+}

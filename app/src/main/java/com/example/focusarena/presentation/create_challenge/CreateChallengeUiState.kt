@@ -1,6 +1,6 @@
 package com.example.focusarena.presentation.create_challenge
 
-import com.example.focusarena.data.models.ChallengeType
+import com.example.focusarena.domain.models.ChallengeType
 
 
 data class CreateChallengeUiState(
