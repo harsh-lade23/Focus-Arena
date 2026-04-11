@@ -12,8 +12,8 @@ data class Challenge(
     val participantLimit: Int,
     val currentParticipantsCount: Int,
     val durationDays: Int,
-    val startedAt: Long,
-    val endedAt: Long,
+    val startedAt: Long?=null,
+    val endedAt: Long? = null,
     val challengeStatus: ChallengeStatus,
     val challengeType: ChallengeType,
     val createdAt: Long
