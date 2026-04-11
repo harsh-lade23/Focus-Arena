@@ -52,6 +52,8 @@ class CreateChallengeViewModel @Inject constructor(
                 participantLimit = createChallengeUiData.participantLimit,
                 durationDays = createChallengeUiData.durationDays,
                 challengeType = createChallengeUiData.type,
+                prize = createChallengeUiData.prize
+
             ).collect {value ->
                 when(value){
                     is ResultState.Success ->{

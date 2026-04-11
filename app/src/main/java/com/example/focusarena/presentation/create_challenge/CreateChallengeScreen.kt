@@ -44,6 +44,7 @@ fun CreateChallengeScreen(
     val duration = remember { mutableStateOf("") }
     val selectedType = remember { mutableStateOf(ChallengeType.DUO) }
     val participantLimit = remember { mutableStateOf("") }
+    val prize = remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { uiEvent ->
@@ -79,6 +80,7 @@ fun CreateChallengeScreen(
             duration,
             selectedType,
             participantLimit,
+            prize,
             createChallengeUiState
         ) {
             viewModel.onEvent(CreateChallengeUiEvent.Create(it))
@@ -93,6 +95,7 @@ private fun CreateChallengeUi(
     duration: MutableState<String>,
     selectedType: MutableState<ChallengeType>,
     participantLimit: MutableState<String>,
+    prize: MutableState<String>,
     createChallengeUiState: State<CreateChallengeUiState>,
     onCreateClick: (CreateChallengeUiData) -> Unit
 ) {
@@ -118,6 +121,16 @@ private fun CreateChallengeUi(
             value = name.value,
             onValueChange = { name.value = it },
             label = { Text("Challenge Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Challenge Name
+        OutlinedTextField(
+            value = prize.value,
+            onValueChange = { prize.value = it },
+            label = { Text("Prize if I win") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -177,7 +190,8 @@ private fun CreateChallengeUi(
                         durationDays = duration.value.toIntOrNull() ?: 0,
                         participantLimit = if (selectedType.value == ChallengeType.GROUP) {
                             participantLimit.value.toIntOrNull()
-                        } else null
+                        } else null,
+                        prize = prize.value
                     )
                     onCreateClick(data)
                 }
