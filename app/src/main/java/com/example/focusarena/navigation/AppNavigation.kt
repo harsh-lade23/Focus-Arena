@@ -7,13 +7,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.focusarena.presentation.home.HomeScreen
 import com.example.focusarena.presentation.authentication.AuthenticationScreen
 import com.example.focusarena.presentation.authentication.AuthenticationViewModel
 import com.example.focusarena.presentation.challenge.ChallengeScreen
 import com.example.focusarena.presentation.create_challenge.CreateChallengeScreen
+import com.example.focusarena.presentation.create_challenge.CreateChallengeViewModel
+import com.example.focusarena.presentation.home.HomeScreen
 import com.example.focusarena.presentation.home.HomeViewModel
 import com.example.focusarena.presentation.join_challenge.JoinChallengeScreen
+import com.example.focusarena.presentation.join_challenge.JoinChallengeViewModel
 
 
 @Composable
@@ -37,10 +39,15 @@ fun AppNavigation (
             )
         }
         composable(Screen.CreateChallenge.route) {
-            CreateChallengeScreen()
+            val createChallengeViewModel: CreateChallengeViewModel = hiltViewModel()
+            CreateChallengeScreen(createChallengeViewModel, navController = navController)
         }
         composable(Screen.JoinChallenge.route){
-            JoinChallengeScreen()
+            val joinChallengeViewModel: JoinChallengeViewModel = hiltViewModel()
+            JoinChallengeScreen(
+                joinChallengeViewModel,
+                navController
+            )
         }
         composable(
             route = Screen.Challenge.route,
