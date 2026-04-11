@@ -8,8 +8,8 @@ data class ChallengeEntity(
     val participantLimit: Int,
     val currentParticipantsCount: Int,
     val durationDays: Int,
-    val startedAt: Long,
-    val endedAt: Long,
+    val startedAt: Long?,
+    val endedAt: Long?,
     val challengeStatus: ChallengeStatus,
     val challengeType: ChallengeType,
     val createdAt: Long
