@@ -17,7 +17,8 @@ fun Participant.toEntity(): ParticipantEntity {
         totalPoints = totalPoints,
         totalStudiedMinutes = totalStudiedMinutes,
         totalTargetMinutes = totalTargetMinutes,
-        totalActiveDays = totalActiveDays
+        totalActiveDays = totalActiveDays,
+        prize = prize
 
 
     )
@@ -35,6 +36,8 @@ fun ParticipantEntity.toDomain(): Participant{
         totalPoints = totalPoints,
         totalStudiedMinutes = totalStudiedMinutes,
         totalTargetMinutes = totalTargetMinutes,
-        totalActiveDays = totalActiveDays
+        totalActiveDays = totalActiveDays,
+        prize = prize
+
     )
 }

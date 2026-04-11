@@ -10,6 +10,7 @@ data class Participant(
     val isOwner: Boolean,
     val status: ParticipantStatus,
     val joinedAt: Long,
+    val prize: String,
     val leftAt: Long? = null,
     val profilePictureUrl: String? = null,
     val totalPoints: Int = 0,
