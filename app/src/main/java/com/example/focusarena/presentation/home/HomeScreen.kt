@@ -13,9 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -108,9 +106,10 @@ fun HomeScreen(
                             items = challengeWithParticipant!!,
                             key = { it.challenge.challengeId }) { item ->
                             val daysLeft =
-                                if (item.challenge.challengeStatus == ChallengeStatus.ACTIVE) DateConversionFunctions.differenceDaysInTwoLong(
-                                    item.challenge.startedAt,
-                                    item.challenge.endedAt
+                                if (item.challenge.challengeStatus == ChallengeStatus.ACTIVE)
+                                    DateConversionFunctions.findRemainingTime(
+                                    item.challenge.startedAt!!,
+                                        durationDays = item.challenge.durationDays
                                 )
                                 else null
                             ChallengeCard(
@@ -158,10 +157,12 @@ private fun ChallengeCard(
                 text = challengeName,
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Time Left: $daysLeft",
-                style = MaterialTheme.typography.titleSmall
-            )
+            if(daysLeft!=null) {
+                Text(
+                    text = "Time Left: $daysLeft",
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
