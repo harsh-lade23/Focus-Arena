@@ -15,3 +15,6 @@
 local.properties
 .idea
 .idea/misc.xml
+app/src/main/java/com/example/focusarena/presentation/challenge/ChallengeViewModel.kt
+app/src/main/java/com/example/focusarena/presentation/challenge/ChallengeScreenState.kt
+app/src/main/java/com/example/focusarena/presentation/challenge/ChallengeScreenEvent.kt
