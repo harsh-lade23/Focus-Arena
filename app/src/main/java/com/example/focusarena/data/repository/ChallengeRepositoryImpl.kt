@@ -7,7 +7,6 @@ import com.example.focusarena.core.utils.ResultState
 import com.example.focusarena.data.mapper.toDomain
 import com.example.focusarena.data.mapper.toEntity
 import com.example.focusarena.data.models.ChallengeEntity
-import com.example.focusarena.data.models.ChallengeWithParticipants
 import com.example.focusarena.data.models.ParticipantEntity
 import com.example.focusarena.domain.models.Challenge
 import com.example.focusarena.domain.models.ChallengeStatus
@@ -18,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -97,37 +95,25 @@ class ChallengeRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun getChallengeById(challengeId: String): Flow<ResultState<ChallengeWithParticipants>> =
+    override fun getChallengeById(challengeId: String): Flow<ResultState<Challenge>> =
         flow {
             emit(ResultState.Loading)
             try {
                 coroutineScope {
-                    val challengeDeferred = async {
+                    val challenge =
                         firebaseFirestore.collection(CHALLENGE_COLLECTION)
                             .document(challengeId)
                             .get()
                             .await()
                             .toObject(ChallengeEntity::class.java)
                             ?: throw Exception("Failed to fetch challenge")
-                    }
-
-                    val participantsDeferred = async {
-                        firebaseFirestore.collection(PARTICIPANT_COLLECTION)
-                            .whereEqualTo("challengeId", challengeId)
-                            .get()
-                            .await()
-                            .mapNotNull {
-                                it.toObject(ParticipantEntity::class.java).toDomain()
-                            }
-                    }
-
-                    val challenge = challengeDeferred.await()
-                    val participants = participantsDeferred.await()
 
 
-                    val challengeWithParticipants =
-                        ChallengeWithParticipants(challenge.toDomain(), participants = participants)
-                    emit(ResultState.Success(challengeWithParticipants))
+
+
+
+
+                    emit(ResultState.Success(challenge.toDomain()))
 
 
                 }
