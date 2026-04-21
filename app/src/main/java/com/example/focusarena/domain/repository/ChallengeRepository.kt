@@ -12,5 +12,4 @@ interface ChallengeRepository {
     fun createChallenge(challenge: Challenge, winningPrize: String) : Flow<ResultState<String>>
     fun startChallenge(challengeId: String) : Flow<ResultState<String>>
 
-    fun joinChallenge(challengeId: String, participantPrize: String): Flow<ResultState<String>>
 }

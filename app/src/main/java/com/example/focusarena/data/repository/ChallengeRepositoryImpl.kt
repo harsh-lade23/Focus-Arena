@@ -201,47 +201,6 @@ class ChallengeRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun joinChallenge(challengeId: String, participantPrize: String): Flow<ResultState<String>> = flow {
-        emit(ResultState.Loading)
-        try {
-            val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User id not found")
-
-            val challengeDocRef = firebaseFirestore.collection(CHALLENGE_COLLECTION)
-                .document(challengeId)
-
-            firebaseFirestore.runTransaction { transaction ->
-
-                val challengeEntity = transaction.get(challengeDocRef).toObject(ChallengeEntity::class.java)?:throw Exception("Challenge not found.")
-                if(challengeEntity.currentParticipantsCount>=challengeEntity.participantLimit)throw Exception("Can't join, max participant limit reached")
-
-                val participantDocRef = firebaseFirestore.collection(PARTICIPANT_COLLECTION).document()
-                val participant = ParticipantEntity(
-                    participantId = participantDocRef.id,
-                    userId = uid,
-                    challengeId = challengeId,
-                    owner = false,
-                    status = "ACTIVE",
-                    joinedAt = System.currentTimeMillis(),
-                    leftAt = null,
-                    profilePictureUrl = null,
-                    totalPoints =0,
-                    totalStudiedMinutes = 0,
-                    totalTargetMinutes =0,
-                    totalActiveDays = 0,
-                    prize = participantPrize
-                )
-                transaction.set(participantDocRef, participant)
-                transaction.update(challengeDocRef, "currentParticipantsCount", challengeEntity.currentParticipantsCount+1)
-            }.await()
-
-            emit(ResultState.Success(challengeId))
-
-
-        } catch (e: Exception) {
-            emit(ResultState.Error(e.localizedMessage ?: "Unknown error Occurred"))
-        }
-    }.flowOn(Dispatchers.IO)
-
 }
 
 
